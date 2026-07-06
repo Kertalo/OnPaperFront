@@ -3,7 +3,7 @@ import './MazeEditor.css';
 
 const SIZE = 10;
 const CELL = 34;
-const WALL_HIT = 10; // ширина кликабельной зоны стены в пикселях
+const WALL_HIT = 15;
 
 function emptyMaze() {
   return Array(SIZE * SIZE).fill(0);
@@ -29,11 +29,21 @@ function hasBottomWall(value) {
 export default function MazeEditor({ onSubmit }) {
   const [maze, setMaze] = useState(emptyMaze);
   const [sending, setSending] = useState(false);
+  const [scale, setScale] = useState(1);
+
+  const handleWheel = (e) => {
+    // Предотвращаем прокрутку страницы
+    e.preventDefault();
+    
+    // Изменяем масштаб (шаг 0.1)
+    const delta = e.deltaY > 0 ? -0.1 : 0.1;
+    setScale(prev => {
+      const newScale = Math.max(0.3, Math.min(2, prev + delta)); // ограничения 0.3x - 2x
+      return Math.round(newScale * 10) / 10; // округляем до 1 знака
+    });
+  };
 
   const handleToggleRight = (index) => {
-    // нет смысла ставить стену справа у последнего столбца
-    if ((index + 1) % SIZE === 0) return;
-
     setMaze((prev) => {
       const next = [...prev];
       next[index] = toggleRight(next[index]);
@@ -42,9 +52,6 @@ export default function MazeEditor({ onSubmit }) {
   };
 
   const handleToggleBottom = (index) => {
-    // нет смысла ставить стену снизу у последней строки
-    if (index + SIZE >= SIZE * SIZE) return;
-
     setMaze((prev) => {
       const next = [...prev];
       next[index] = toggleBottom(next[index]);
@@ -65,26 +72,42 @@ export default function MazeEditor({ onSubmit }) {
 
   return (
     <div className="maze-editor">
-      <div className="maze-editor-grid">
-        {maze.map((value, index) => (
-          <div key={index} className="maze-editor-cell">
-            {hasRightWall(value) && <div className="wall wall--right" />}
-            {hasBottomWall(value) && <div className="wall wall--bottom" />}
+      <div 
+        className="maze-editor-grid-wrapper"
+        onWheel={handleWheel}
+        style={{ 
+          transform: `scale(${scale})`,
+          transformOrigin: 'center center',
+          transition: 'transform 0.1s ease'
+        }}
+      >
+        <div className="maze-editor-grid">
+          {maze.map((value, index) => (
+            <div id={index} key={index} className="maze-editor-cell">
+              {hasRightWall(value) && <div className="wall wall--right" />}
+              {hasBottomWall(value) && <div className="wall wall--bottom" />}
 
-            <div
-              className="hit-zone hit-zone--right"
-              style={{ width: WALL_HIT }}
-              onClick={() => handleToggleRight(index)}
-            />
-            <div
-              className="hit-zone hit-zone--bottom"
-              style={{ height: WALL_HIT }}
-              onClick={() => handleToggleBottom(index)}
-            />
-          </div>
-        ))}
+              {(index + 1) % SIZE != 0 &&
+                <div
+                  className="hit-zone hit-zone--right"
+                  style={{ width: WALL_HIT }}
+                  onClick={() => handleToggleRight(index)}
+                />
+              }
+              {Math.trunc(index / SIZE) != SIZE - 1 &&
+                <div
+                  className="hit-zone hit-zone--bottom"
+                  style={{ height: WALL_HIT }}
+                  onClick={() => handleToggleBottom(index)}
+                />
+              }
+            </div>
+          ))}
+        </div>
       </div>
-
+      <div style={{ fontSize: '14px', color: '#888' }}>
+        Масштаб: {Math.round(scale * 100)}%
+      </div>
       <div className="maze-editor-actions">
         <button type="button" onClick={handleReset} disabled={sending}>
           Очистить
