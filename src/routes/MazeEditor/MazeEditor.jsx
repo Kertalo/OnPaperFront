@@ -70,7 +70,7 @@ export default function MazeEditor({ onSubmit }) {
   const handleSubmit = async () => {
     setSending(true);
     try {
-      await onSubmit?.(maze);
+      await onSubmit?.(maze, treasure);
     } finally {
       setSending(false);
     }

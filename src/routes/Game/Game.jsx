@@ -86,12 +86,16 @@ function Game() {
       }
   }, [connection]);
 
-  const handleSaveMaze = async (maze) => {
+  const handleSaveMaze = async (maze, treasure) => {
     //if (!connection || connection.state !== signalR.HubConnectionState.Connected) {
     //  throw new Error('Нет соединения с сервером');
     //}
 
-    await connection.invoke('SaveMaze', gameId, maze);
+    await connection.invoke('SaveMaze', gameId, {
+      maze: maze, // массив чисел 0-3
+      size: SIZE,
+      treasure: treasure
+    });
   };
 
   return (
