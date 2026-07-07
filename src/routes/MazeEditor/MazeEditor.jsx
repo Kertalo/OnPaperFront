@@ -1,9 +1,9 @@
 import { useState } from 'react';
 import './MazeEditor.css';
 
-const SIZE = 10;
+const SIZE = 6;
 const CELL = 34;
-const WALL_HIT = 15;
+const WALL_HIT = 10;
 
 function emptyMaze() {
   return Array(SIZE * SIZE).fill(0);
@@ -30,6 +30,7 @@ export default function MazeEditor({ onSubmit }) {
   const [maze, setMaze] = useState(emptyMaze);
   const [sending, setSending] = useState(false);
   const [scale, setScale] = useState(1);
+  const [treasure, setTreasure] = useState(-1);
 
   const handleWheel = (e) => {
     // Предотвращаем прокрутку страницы
@@ -41,6 +42,11 @@ export default function MazeEditor({ onSubmit }) {
       const newScale = Math.max(0.3, Math.min(2, prev + delta)); // ограничения 0.3x - 2x
       return Math.round(newScale * 10) / 10; // округляем до 1 знака
     });
+  };
+
+  const handleCell = (index) => {
+    console.log(index);
+    setTreasure(index);
   };
 
   const handleToggleRight = (index) => {
@@ -76,6 +82,7 @@ export default function MazeEditor({ onSubmit }) {
         className="maze-editor-grid-wrapper"
         onWheel={handleWheel}
         style={{ 
+          '--cols': SIZE,
           transform: `scale(${scale})`,
           transformOrigin: 'center center',
           transition: 'transform 0.1s ease'
@@ -83,7 +90,8 @@ export default function MazeEditor({ onSubmit }) {
       >
         <div className="maze-editor-grid">
           {maze.map((value, index) => (
-            <div id={index} key={index} className="maze-editor-cell">
+            <div id={index} key={index} className="maze-editor-cell" onClick={() => handleCell(index)}>
+              {treasure == index && <div className="treasure" />}
               {hasRightWall(value) && <div className="wall wall--right" />}
               {hasBottomWall(value) && <div className="wall wall--bottom" />}
 

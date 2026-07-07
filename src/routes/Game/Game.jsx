@@ -87,9 +87,9 @@ function Game() {
   }, [connection]);
 
   const handleSaveMaze = async (maze) => {
-    if (!connection || connection.state !== signalR.HubConnectionState.Connected) {
-      throw new Error('Нет соединения с сервером');
-    }
+    //if (!connection || connection.state !== signalR.HubConnectionState.Connected) {
+    //  throw new Error('Нет соединения с сервером');
+    //}
 
     await connection.invoke('SaveMaze', gameId, maze);
   };

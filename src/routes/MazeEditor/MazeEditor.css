@@ -8,8 +8,8 @@
 
 .maze-editor-grid {
   display: grid;
-  grid-template-columns: repeat(10, 34px);
-  grid-template-rows: repeat(10, 34px);
+  grid-template-columns: repeat(var(--cols), 34px);
+  grid-template-rows: repeat(var(--cols), 34px);
   background: var(--surface-1);
   border: 3px solid #ffffff;
 }
@@ -51,6 +51,7 @@
   position: absolute;
   cursor: pointer;
   z-index: 2;
+  transition: background 0.15s ease;
 }
 
 .hit-zone--right {
@@ -66,7 +67,30 @@
 }
 
 .hit-zone:hover {
-  background: var(--accent-transparent, rgba(100, 150, 255, 0.35));
+  background: rgba(100, 150, 255, 0.35);
+}
+
+/* Активная зона клика (когда нажали) */
+.hit-zone:active {
+  background: rgba(100, 150, 255, 0.6);
+}
+
+
+.treasure {
+  background-color: chartreuse;
+  height: 100%;
+  width: 100%;
+  z-index: 3;
+  pointer-events: auto;
+  transition: all 0.2s ease;
+}
+
+.maze-editor-cell:not(:has(.hit-zone:hover)):hover {
+  background: var(--accent-transparent, rgba(109, 140, 207, 0.35));
+}
+
+.maze-editor-cell.hovered {
+  background: rgba(109, 140, 207, 0.35);
 }
 
 .maze-editor-actions {
