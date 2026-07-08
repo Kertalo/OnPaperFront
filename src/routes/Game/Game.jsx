@@ -50,10 +50,10 @@ function Board({ walls, title }) {
 function Game() {
   const { gameId } = useParams();
   const [connection, setConnection] = useState(null);
-  const [notifications, setNotifications] = useState([]);
-  const [isGameStart, setIsGameStart] = useState(false);
+  const [gameState, setGameState] = useState(null);
   const [leftLabyrinth] = useState(generateWalls);
   const [rightLabyrinth] = useState(generateWalls);
+  let size_x, size_y = 0;
 
   useEffect(() => {
     console.log("Загружаем игру с id:", gameId);
@@ -77,9 +77,8 @@ function Game() {
           .then(() => {
             connection.invoke("GetConnectionId").then(id => console.log('Connection ID:', id));
             console.log("Connected!");
-            connection.on("ReceiveNotification", message => {
-              console.log("Received notification:", message);
-              setNotifications(notifications => [...notifications, message]);
+            connection.on("GetMazeOption", (size_x, size_y) => {
+              size_x
             });
           })
           .catch(e => console.log('Connection failed: ', e));
@@ -100,7 +99,7 @@ function Game() {
 
   return (
     <>
-      { !isGameStart && <MazeEditor onSubmit={handleSaveMaze} /> }
+      { !isGameStart && connection && <MazeEditor size_x={6} size_y={5} onSubmit={handleSaveMaze} /> }
       { isGameStart &&
         <div className="battlefield">
           <Board walls={leftLabyrinth} title="Ваше поле" />

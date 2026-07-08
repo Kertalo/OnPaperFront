@@ -26,8 +26,10 @@ function hasBottomWall(value) {
   return (value & 2) === 2;
 }
 
-export default function MazeEditor({ onSubmit }) {
-  const [maze, setMaze] = useState(emptyMaze);
+export default function MazeEditor({ size_x, size_y, onSubmit }) {
+  //const [verticalWalls, setVerticalWalls] = useState(emptyMaze);
+  //const [horizontalWalls, setHorizontalWalls] = useState(emptyMaze);
+  const [maze, setMaze] = useState(emptyMaze());
   const [sending, setSending] = useState(false);
   const [scale, setScale] = useState(1);
   const [treasure, setTreasure] = useState(-1);
