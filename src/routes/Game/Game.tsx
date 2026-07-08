@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams } from "react-router";
 import * as signalR from "@microsoft/signalr";
-import { API_URL } from '../../../config.js';
+import { API_URL } from '../../../config';
 import './Game.css';
-import MazeEditor from '../MazeEditor/MazeEditor.jsx'; // Оставьте .jsx или обновите расширение при переделке редактора
+import MazeEditor from '../MazeEditor/MazeEditor.tsx'; // Оставьте .jsx или обновите расширение при переделке редактора
+import {Maze} from '../../models/Maze.tsx';
 
 const SIZE = 10;
 

@@ -1,57 +1,55 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './MazeEditor.css';
-import {Maze} from '../../models/Maze.tsx';
+import { Maze } from '../../models/Maze';
 
-const SIZE = 6;
 const CELL = 34;
 const WALL_HIT = 10;
 
-function emptyMaze() {
-  return Array(SIZE * SIZE).fill(0);
-}
-
-// биты: 1 - стена справа, 2 - стена снизу
-function toggleRight(value) {
+function toggleRight(value: number): number {
   return value ^ 1;
 }
 
-function toggleBottom(value) {
+function toggleBottom(value: number): number {
   return value ^ 2;
 }
 
-function hasRightWall(value) {
+function hasRightWall(value: number): boolean {
   return (value & 1) === 1;
 }
 
-function hasBottomWall(value) {
+function hasBottomWall(value: number): boolean {
   return (value & 2) === 2;
 }
 
-export default function MazeEditor({ size_x, size_y, onSubmit }) {
-  const [verticalWalls, setVerticalWalls] = useState(emptyMaze);
-  const [horizontalWalls, setHorizontalWalls] = useState(emptyMaze);
+interface MazeEditorProps {
+  size_x: number;
+  size_y: number;
+  onSubmit?: (maze: MazeGrid, treasure: number) => Promise<void> | void;
+}
+
+export default function MazeEditor({ size_x, size_y, onSubmit }: MazeEditorProps) {
+  const [maze, setMaze] = useState<Maze>(new Maze(size_x, size_y));
   const [sending, setSending] = useState(false);
   const [scale, setScale] = useState(1);
-  const [treasure, setTreasure] = useState(-1);
 
-  const handleWheel = (e) => {
+  const handleWheel = (e: React.WheelEvent<HTMLDivElement>) => {
     // Предотвращаем прокрутку страницы
     e.preventDefault();
-    
+
     // Изменяем масштаб (шаг 0.1)
     const delta = e.deltaY > 0 ? -0.1 : 0.1;
-    setScale(prev => {
+    setScale((prev) => {
       const newScale = Math.max(0.3, Math.min(2, prev + delta)); // ограничения 0.3x - 2x
       return Math.round(newScale * 10) / 10; // округляем до 1 знака
     });
   };
 
-  const handleCell = (index) => {
+  const handleCell = (index: number) => {
     console.log(index);
     setTreasure(index);
   };
 
-  const handleToggleRight = (index) => {
+  const handleToggleRight = (index: number) => {
     setMaze((prev) => {
       const next = [...prev];
       next[index] = toggleRight(next[index]);
@@ -59,7 +57,7 @@ export default function MazeEditor({ size_x, size_y, onSubmit }) {
     });
   };
 
-  const handleToggleBottom = (index) => {
+  const handleToggleBottom = (index: number) => {
     setMaze((prev) => {
       const next = [...prev];
       next[index] = toggleBottom(next[index]);
@@ -80,37 +78,44 @@ export default function MazeEditor({ size_x, size_y, onSubmit }) {
 
   return (
     <div className="maze-editor">
-      <div 
+      <div
         className="maze-editor-grid-wrapper"
         onWheel={handleWheel}
-        style={{ 
-          '--cols': SIZE,
-          transform: `scale(${scale})`,
-          transformOrigin: 'center center',
-          transition: 'transform 0.1s ease'
-        }}
+        style={
+          {
+            '--cols': size_x,
+            transform: `scale(${scale})`,
+            transformOrigin: 'center center',
+            transition: 'transform 0.1s ease',
+          } as React.CSSProperties
+        }
       >
         <div className="maze-editor-grid">
-          {maze.map((value, index) => (
-            <div id={index} key={index} className="maze-editor-cell" onClick={() => handleCell(index)}>
-              {treasure == index && <div className="treasure" />}
+          {Array.from({ length: maze.sizeX * maze.sizeY }, (_, index) => (
+            <div
+              id={String(index)}
+              key={index}
+              className="maze-editor-cell"
+              onClick={() => handleCell(index)}
+            >
+              {maze.treasure === index && <div className="treasure" />}
               {hasRightWall(value) && <div className="wall wall--right" />}
               {hasBottomWall(value) && <div className="wall wall--bottom" />}
 
-              {(index + 1) % SIZE != 0 &&
+              {(index + 1) % maze.sizeX !== 0 && (
                 <div
                   className="hit-zone hit-zone--right"
                   style={{ width: WALL_HIT }}
                   onClick={() => handleToggleRight(index)}
                 />
-              }
-              {Math.trunc(index / SIZE) != SIZE - 1 &&
+              )}
+              {Math.trunc(index / SIZE) !== SIZE - 1 && (
                 <div
                   className="hit-zone hit-zone--bottom"
                   style={{ height: WALL_HIT }}
                   onClick={() => handleToggleBottom(index)}
                 />
-              }
+              )}
             </div>
           ))}
         </div>
