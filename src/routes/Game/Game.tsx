@@ -3,7 +3,8 @@ import { useParams } from "react-router";
 import * as signalR from "@microsoft/signalr";
 import { API_URL } from '../../../config';
 import './Game.css';
-import MazeEditor from '../MazeEditor/MazeEditor.tsx'; // Оставьте .jsx или обновите расширение при переделке редактора
+import { useSignalR } from '../../models/SignalRContext.tsx';
+//import MazeEditor from '../MazeEditor/MazeEditor.tsx'; // Оставьте .jsx или обновите расширение при переделке редактора
 import {Maze} from '../../models/Maze.tsx';
 
 const SIZE = 10;
@@ -72,67 +73,27 @@ function Board({ walls, title }: BoardProps) {
 }
 
 function Game() {
-  // Указываем тип параметров для useParams
   const { gameId } = useParams<GameRouteParams>();
-  
-  // Указываем типы для состояний React
-  const [connection, setConnection] = useState<signalR.HubConnection | null>(null);
-  
-  // Добавлено состояние для отслеживания старта игры (в JS-коде этой переменной не было в useState)
-  const [isGameStart, setIsGameStart] = useState<boolean>(false);
-  
-  // Пример стейта под будущие данные от SignalR
-  const [gameState, setGameState] = useState<any>(null); 
-  
-  const [leftLabyrinth] = useState<number[]>(generateWalls);
-  const [rightLabyrinth] = useState<number[]>(generateWalls);
-
-  // Стейты для размеров (в JS-коде конструкция let size_x, size_y = 0 инициализировала нулем только size_y)
-  const [sizeX, setSizeX] = useState<number>(0);
-  const [sizeY, setSizeY] = useState<number>(0);
+  const [isMazeBuild, setIsMazeBuild] = useState(false);
+  const { connection } = useSignalR();
 
   useEffect(() => {
     console.log("Загружаем игру с id:", gameId);
   }, [gameId]);
-
-  useEffect(() => {
-    const token = localStorage.getItem('token') || '';
-    
-    const newConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`${API_URL}/gameHub`, {
-        accessTokenFactory: () => token
-      })
-      .withAutomaticReconnect() // Хорошая практика для стабильного мультиплеера
-      .build();
-
-    setConnection(newConnection);
-
-    // Очистка соединения при размонтировании компонента
-    return () => {
-      newConnection.stop();
-    };
-  }, []);
   
   useEffect(() => {
-    if (connection) {
-      connection.start()
-        .then(() => {
-          // Вызываем метод на бэкенде для получения ID подключения
-          connection.invoke<string>("GetConnectionId")
-            .then(id => console.log('Connection ID:', id));
-            
-          console.log("Connected!");
+    if (!connection)
+      return;
 
-          // Подписываемся на событие от сервера
-          connection.on("GetMazeOption", (x: number, y: number) => {
-            setSizeX(x);
-            setSizeY(y);
-            // Если получение параметров означает старт игры:
-            setIsGameStart(true);
-          });
-        })
-        .catch(e => console.log('Connection failed: ', e));
-    }
+    connection.invoke<string>("GetConnectionId")
+      .then(id => console.log('Connection ID:', id));
+        /*connection.on("GetMazeOption", (x: number, y: number) => {
+          setSizeX(x);
+          setSizeY(y);
+          // Если получение параметров означает старт игры:
+          setIsGameStart(true);
+        });
+      })*/
   }, [connection]);
 
   // Типизируем аргументы функции сохранения лабиринта
@@ -155,15 +116,12 @@ function Game() {
       console.error('Ошибка при отправке лабиринта:', error);
     }
   };
-
+//{ !isMazeBuild && connection && 1234 }
   return (
     <>
-      { !isGameStart && connection && <MazeEditor size_x={6} size_y={5} onSubmit={handleSaveMaze} /> }
-      { isGameStart &&
-        <div className="battlefield">
-          <Board walls={leftLabyrinth} title="Ваше поле" />
-          <Board walls={rightLabyrinth} title="Поле противника" />
-        </div>
+      
+      { isMazeBuild &&
+        123
       }
     </>
   );

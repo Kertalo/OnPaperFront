@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import './MazeEditor.css';
 import { Maze } from '../../models/Maze';
+import { useSignalR } from '../../hooks/useSignalR.tsx';
 
 const CELL = 34;
 const WALL_HIT = 10;
@@ -24,10 +25,9 @@ function hasBottomWall(value: number): boolean {
 interface MazeEditorProps {
   size_x: number;
   size_y: number;
-  onSubmit?: (maze: MazeGrid, treasure: number) => Promise<void> | void;
 }
 
-export default function MazeEditor({ size_x, size_y, onSubmit }: MazeEditorProps) {
+export default function MazeEditor({ size_x, size_y }: MazeEditorProps) {
   const [maze, setMaze] = useState<Maze>(new Maze(size_x, size_y));
   const [sending, setSending] = useState(false);
   const [scale, setScale] = useState(1);
@@ -46,7 +46,7 @@ export default function MazeEditor({ size_x, size_y, onSubmit }: MazeEditorProps
 
   const handleCell = (index: number) => {
     console.log(index);
-    setTreasure(index);
+    //setTreasure(index);
   };
 
   const handleToggleRight = (index: number) => {

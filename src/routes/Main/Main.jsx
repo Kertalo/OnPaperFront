@@ -5,18 +5,20 @@ import Home from '../Home/Home.jsx'
 import Game from '../Game/Game.tsx'
 import Login from '../Auth/Login.jsx'
 import Register from '../Auth/Register.jsx'
+import { SignalRProvider } from '../../models/SignalRContext.tsx'
 import './Main.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
     <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/game" element={<Game />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/game/:gameId" element={<Game />} />
-      </Routes>
+      <SignalRProvider>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/game/:gameId" element={<Game />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+        </Routes>
+      </SignalRProvider>
     </BrowserRouter>
   </StrictMode>
 )
