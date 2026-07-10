@@ -10,11 +10,11 @@ export const SignalRContext = createContext<SignalRContextType>( {connection: nu
 
 export const SignalRProvider = ({ children }: { children: React.ReactNode }) => {
   const [connection, setConnection] = useState<HubConnection | null>(null);
-  //const token = localStorage.getItem('token') || '';
+  const token = localStorage.getItem('token') || '';
   
   useEffect(() => {
     const newConnection = new HubConnectionBuilder()
-      .withUrl(`${API_URL}/gameHub`, { /*accessTokenFactory: () => token*/ })
+      .withUrl(`${API_URL}/gameHub`, { accessTokenFactory: () => token })
       .withAutomaticReconnect()
       .build();
 

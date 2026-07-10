@@ -1,4 +1,4 @@
-.maze-editor {
+.editor {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -6,15 +6,15 @@
   padding: 2rem 0;
 }
 
-.maze-editor-grid {
+.maze {
   display: grid;
-  grid-template-columns: repeat(var(--cols), 34px);
-  grid-template-rows: repeat(var(--cols), 34px);
+  grid-template-columns: repeat(var(--sizeX), 34px);
+  grid-template-rows: repeat(var(--sizeY), 34px);
   background: var(--surface-1);
   border: 3px solid #ffffff;
 }
 
-.maze-editor-cell {
+.cell {
   position: relative;
   width: 34px;
   height: 34px;
