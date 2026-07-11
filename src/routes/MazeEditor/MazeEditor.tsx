@@ -27,6 +27,7 @@ export default function MazeEditor() {
 
   const handleCell = (index: number) => {
     maze!.treasure = index;
+    maze!.treasure = 0;
     forceUpdate({});
   };
 

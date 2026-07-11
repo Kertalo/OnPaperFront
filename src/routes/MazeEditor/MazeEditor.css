@@ -3,13 +3,15 @@
   flex-direction: column;
   align-items: center;
   gap: 16px;
-  padding: 2rem 0;
+  padding: 0;
+  margin: 0;
+  border: 0;
 }
 
 .maze {
   display: grid;
-  grid-template-columns: repeat(var(--sizeX), 34px);
-  grid-template-rows: repeat(var(--sizeY), 34px);
+  grid-template-columns: repeat(var(--sizeX), 1fr);
+  grid-template-rows: repeat(var(--sizeY), 1fr);
   background: var(--surface-1);
   border: 3px solid #ffffff;
 }
@@ -24,7 +26,6 @@
   border-bottom: 0.5px solid #686868;
 }
 
-/* сама стена — визуальная толстая линия */
 .wall {
   position: absolute;
   background: #ffffff;
@@ -46,7 +47,6 @@
   height: 4px;
 }
 
-/* кликабельная зона поверх границы — шире, чем сама стена, чтобы легче попадать */
 .hit-zone {
   position: absolute;
   cursor: pointer;
@@ -70,11 +70,9 @@
   background: rgba(100, 150, 255, 0.35);
 }
 
-/* Активная зона клика (когда нажали) */
 .hit-zone:active {
   background: rgba(100, 150, 255, 0.6);
 }
-
 
 .treasure {
   background-color: chartreuse;

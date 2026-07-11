@@ -17,7 +17,7 @@ export class Maze {
 
   addOrRemoveWall(cellIndex: number, direction: Direction, onlyAddWall: boolean = false): void {
     let wallIndex: number = this.getWallIndex(cellIndex, direction);
-    
+
     if (wallIndex < 0) {
       return;
     }
@@ -61,7 +61,7 @@ export class Maze {
       case Direction.DOWN:
         if (cellIndex >= this.sizeX * (this.sizeY - 1))
           return -1;
-        return cellIndex + this.sizeX;
+        return cellIndex;
       case Direction.LEFT:
         if (cellIndex % this.sizeX == 0)
           return -1;
