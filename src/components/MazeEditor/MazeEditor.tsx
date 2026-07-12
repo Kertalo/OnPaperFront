@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import './MazeEditor.css';
-import { Maze } from '../../models/Maze';
+import { Maze } from '../../models/Maze.tsx';
 import { useSignalR } from '../../models/SignalRContext.tsx';
-import { Direction } from '../../enums/Direction';
+import { Direction } from '../../enums/Direction.tsx';
 
 const WALL_HIT = 10;
 

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useParams } from "react-router";
 import './Game.css';
 import { useSignalR } from '../../models/SignalRContext.tsx';
-import MazeEditor from '../MazeEditor/MazeEditor.tsx';
+import MazeEditor from '../../components/MazeEditor/MazeEditor.tsx';
 
 interface GameRouteParams extends Record<string, string | undefined> {
   gameId: string;

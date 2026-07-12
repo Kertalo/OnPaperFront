@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, Link } from "react-router";
 import { API_URL } from '../../../config.js'
-import * as signalR from "@microsoft/signalr";
 import './Home.css'
+import Search from '../../components/Search/Search.tsx'
+import { useSignalR } from '../../models/SignalRContext.tsx';
 
 function Home() {
-  const [connection, setConnection] = useState(null);
   const [searching, setSearching] = useState(false);
   const [user, setUser] = useState(null);
+  const { connection } = useSignalR();
 
   useEffect(() => {
     async function fetchUser() {
@@ -43,31 +44,19 @@ function Home() {
 
   const handleSearch = () => {
     setSearching(true);
-
-    const newConnection = new signalR.HubConnectionBuilder()
-      .withUrl(`${ API_URL }/gameHub`, {
-        accessTokenFactory: () => localStorage.getItem('token')
-      })
-      //.withAutomaticReconnect()
-      .build();
-    setConnection(newConnection);
   };
-  
-  useEffect(() => {
-    if (!connection)
-      return;
 
-    connection.on("GameFound", (matchId, opponentId) => {
-      console.log(`Игра найдена! ID матча: ${matchId}, противник: ${opponentId}`);
-      navigate(`/game/${matchId}`);
+  useEffect(() => {
+    if (!connection) {
+      return;
+    }
+
+    connection.on("GameFound", (gameId, opponentId) => {
+      console.log(`Game found! Game ID: ${gameId}, Opponent: ${opponentId}`);
+      navigate(`/game/${gameId}`);
     });
 
-    connection.start()
-      .then(() => {
-        connection.invoke("FindGame")
-      })
-      .catch(e => console.log('Connection failed: ', e));
-    
+    connection.invoke("FindGame");
   }, [connection]);
 
   const handleLogin = () => {
@@ -91,14 +80,7 @@ function Home() {
         </button>
         <p>No account? <Link to="/register">Sign up</Link></p>
       </div>
-      {searching && (
-        <div className="overlay">
-          <div className="modal">
-            <h3>Searching for players...</h3>
-            <div className="spinner"></div>
-          </div>
-        </div>
-      )}
+      { searching && <Search /> }
     </>
   )
 }
