@@ -2,13 +2,15 @@ import { useEffect, useState } from 'react';
 import './MazeEditor.css';
 import { Maze } from '../../models/Maze.tsx';
 import { useSignalR } from '../../models/SignalRContext.tsx';
-import { Direction } from '../../enums/Direction.tsx';
+import { Directions } from '../../enums/Directions.tsx';
+import { EditMods } from '../../enums/EditMods.tsx';
 
 const WALL_HIT = 10;
 
 export default function MazeEditor() {
   const [maze, setMaze] = useState<Maze | null>(null);
   const [sending, setSending] = useState(false);
+  const [editMode, setEditMode] = useState(EditMods.WALL);
   const { connection } = useSignalR();
   const [, forceUpdate] = useState({});
 
@@ -24,12 +26,6 @@ export default function MazeEditor() {
         .catch(e => console.log(e))
     })()
   }, [connection]);
-
-  const handleCell = (index: number) => {
-    maze!.treasure = index;
-    maze!.treasure = 0;
-    forceUpdate({});
-  };
 
   const handleSaveMaze = async () => {
     if (!connection) {
@@ -49,36 +45,50 @@ export default function MazeEditor() {
               id={ String(index) }
               key={ index }
               className="cell"
-              onClick={() => handleCell(index) }
             >
               { maze.treasure === index && <div className="treasure" /> }
-              { maze.hasWall(index, Direction.RIGHT) && <div className="wall wall--right" /> }
-              { maze.hasWall(index, Direction.DOWN) && <div className="wall wall--bottom" /> }
-
-              { (index + 1) % maze.sizeX !== 0 && (
+              { maze.hasWall(index, Directions.RIGHT) && <div className="wall wall-right" /> }
+              { maze.hasWall(index, Directions.DOWN) && <div className="wall wall-bottom" /> }
+              { editMode === EditMods.TREASURE &&
                 <div
-                  className="hit-zone hit-zone--right"
-                  style={ { width: WALL_HIT } }
-                  onClick={ () => { maze.addOrRemoveWall(index, Direction.RIGHT); forceUpdate({}); } }
+                  className="cell-zone"
+                  onClick={ () => { maze.treasure === index ? maze.treasure = null : maze.treasure = index; forceUpdate({}); } }
                 />
-              ) }
-              { index < maze.sizeX * (maze.sizeY - 1) && (
-                <div
-                  className="hit-zone hit-zone--bottom"
-                  style={ { height: WALL_HIT } }
-                  onClick={ () => { maze.addOrRemoveWall(index, Direction.DOWN); forceUpdate({}); } }
-                />
-              )}
+              }
+              { editMode === EditMods.WALL &&
+                <>
+                  { (index + 1) % maze.sizeX !== 0 && (
+                    <div
+                      className="wall-zone wall-zone-right"
+                      style={ { width: WALL_HIT } }
+                      onClick={ () => { maze.addOrRemoveWall(index, Directions.RIGHT); forceUpdate({}); } }
+                    />
+                  ) }
+                  { index < maze.sizeX * (maze.sizeY - 1) && (
+                    <div
+                      className="wall-zone wall-zone-bottom"
+                      style={ { height: WALL_HIT } }
+                      onClick={ () => { maze.addOrRemoveWall(index, Directions.DOWN); forceUpdate({}); } }
+                    />
+                  ) }
+                </>
+              }
             </div>
           ))}
         </div>
       }
+      <button type="button" onClick={ () => setEditMode(EditMods.WALL) }>
+        Wall
+      </button>
+      <button type="button" onClick={ () => setEditMode(EditMods.TREASURE) }>
+        Treasure
+      </button>
       <div className="buttons">
         <button type="button" onClick={ () => maze && setMaze(new Maze(maze.sizeX, maze.sizeY)) } disabled={ sending }>
-          Очистить
+          Clear
         </button>
         <button type="button" onClick={ handleSaveMaze } disabled={ sending }>
-          { sending ? 'Отправка...' : 'Сохранить лабиринт' }
+          { sending ? 'Sending...' : 'Save maze' }
         </button>
       </div>
     </div>

@@ -1,4 +1,4 @@
-import { Direction } from '../enums/Direction';
+import { Directions } from '../enums/Directions';
 
 export class Maze {
   sizeX: number;
@@ -15,55 +15,55 @@ export class Maze {
     this.treasure = null;
   }
 
-  addOrRemoveWall(cellIndex: number, direction: Direction, onlyAddWall: boolean = false): void {
+  addOrRemoveWall(cellIndex: number, direction: Directions, onlyAddWall: boolean = false): void {
     let wallIndex: number = this.getWallIndex(cellIndex, direction);
 
     if (wallIndex < 0) {
       return;
     }
     
-    if (direction == Direction.RIGHT || direction == Direction.LEFT) {
+    if (direction === Directions.RIGHT || direction === Directions.LEFT) {
       if (wallIndex < this.verticalWalls.length)
-        this.verticalWalls[wallIndex] = this.verticalWalls[wallIndex] == 0 || onlyAddWall ? 1 : 0;
+        this.verticalWalls[wallIndex] = this.verticalWalls[wallIndex] === 0 || onlyAddWall ? 1 : 0;
     } else {
       if (wallIndex < this.horizontalWalls.length)
-        this.horizontalWalls[wallIndex] = this.horizontalWalls[wallIndex] == 0 || onlyAddWall ? 1 : 0;
+        this.horizontalWalls[wallIndex] = this.horizontalWalls[wallIndex] === 0 || onlyAddWall ? 1 : 0;
     }
   }
 
-  hasWall(cellIndex: number, direction: Direction): boolean {
+  hasWall(cellIndex: number, direction: Directions): boolean {
     let wallIndex: number = this.getWallIndex(cellIndex, direction);
 
     if (wallIndex < 0) {
       return false;
     }
     
-    if (direction == Direction.RIGHT || direction == Direction.LEFT) {
+    if (direction === Directions.RIGHT || direction === Directions.LEFT) {
       if (wallIndex < this.verticalWalls.length)
-        return this.verticalWalls[wallIndex] == 1;
+        return this.verticalWalls[wallIndex] === 1;
     } else {
       if (wallIndex < this.horizontalWalls.length)
-        return this.horizontalWalls[wallIndex] == 1;
+        return this.horizontalWalls[wallIndex] === 1;
     }
     return false;
   }
 
-  getWallIndex(cellIndex: number, direction: Direction): number {
+  getWallIndex(cellIndex: number, direction: Directions): number {
     switch (direction) {
-      case Direction.UP:
+      case Directions.UP:
         if (cellIndex < this.sizeX)
           return -1;
         return cellIndex - this.sizeX;
-      case Direction.RIGHT:
-        if ((cellIndex + 1) % this.sizeX == 0)
+      case Directions.RIGHT:
+        if ((cellIndex + 1) % this.sizeX === 0)
           return -1;
         return cellIndex - Math.trunc(cellIndex / this.sizeX);
-      case Direction.DOWN:
+      case Directions.DOWN:
         if (cellIndex >= this.sizeX * (this.sizeY - 1))
           return -1;
         return cellIndex;
-      case Direction.LEFT:
-        if (cellIndex % this.sizeX == 0)
+      case Directions.LEFT:
+        if (cellIndex % this.sizeX === 0)
           return -1;
         return cellIndex - (Math.trunc(cellIndex / this.sizeX) + 1);
       default:

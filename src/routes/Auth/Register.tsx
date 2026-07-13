@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, SubmitEvent } from 'react'
 import { useNavigate, Link } from "react-router";
 import { API_URL } from '../../../config.js'
 import './Auth.css'
@@ -7,14 +7,14 @@ function Register() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [passwordConfirm, setPasswordConfirm] = useState("");
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   let navigate = useNavigate();
 
-  const handleRegister = async (e) => {
+  const handleRegister = async (e: SubmitEvent) => {
     e.preventDefault();
 
-    if (password != passwordConfirm ) {
+    if (password !== passwordConfirm ) {
       setError("Passwords do not match");
       return;
     }
@@ -58,19 +58,19 @@ function Register() {
 
   return (
     <>
-      <form onSubmit={handleRegister} method="post">
+      <form onSubmit={ handleRegister } method="post">
         <h1>Sign Up</h1>
 
-        {error && <p className="error" id="error" >{error}</p>}
+        { error && <p className="error" id="error" >{ error }</p> }
 
         <label htmlFor="email">Email</label>
-        <input type="email" id="email" name="email" value={email} onChange={(e) => setEmail(e.target.value)} required />
+        <input type="email" id="email" name="email" value={ email } onChange={ (e) => setEmail(e.target.value) } required />
 
         <label htmlFor="password">Password</label>
-        <input type="password" id="password" name="password" value={password} onChange={(e) => setPassword(e.target.value)} required />
+        <input type="password" id="password" name="password" value={ password } onChange={ (e) => setPassword(e.target.value) } required />
 
         <label htmlFor="confirm-password">Confirm password</label>
-        <input type="password" id="confirm-password" name="confirm-password" value={passwordConfirm} onChange={(e) => setPasswordConfirm(e.target.value)} required />
+        <input type="password" id="confirm-password" name="confirm-password" value={ passwordConfirm } onChange={ (e) => setPasswordConfirm(e.target.value) } required />
 
         <button type="submit">Create account</button>
 

@@ -33,62 +33,67 @@
   z-index: 1;
 }
 
-.wall--right {
+.wall-right {
   top: 0;
   right: -2px;
   width: 4px;
   height: 100%;
 }
 
-.wall--bottom {
+.wall-bottom {
   left: 0;
   bottom: -2px;
   width: 100%;
   height: 4px;
 }
 
-.hit-zone {
+.wall-zone {
   position: absolute;
   cursor: pointer;
   z-index: 2;
   transition: background 0.15s ease;
 }
 
-.hit-zone--right {
+.wall-zone-right {
   top: 0;
   right: -5px;
   height: 100%;
 }
 
-.hit-zone--bottom {
+.wall-zone-bottom {
   left: 0;
   bottom: -5px;
   width: 100%;
 }
 
-.hit-zone:hover {
+.wall-zone:hover {
   background: rgba(100, 150, 255, 0.35);
 }
 
-.hit-zone:active {
+.wall-zone:active {
   background: rgba(100, 150, 255, 0.6);
 }
 
+.cell-zone {
+  z-index: 10;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  pointer-events: auto;
+}
+
+.cell-zone:hover {
+  background: rgba(100, 150, 255, 0.35);
+}
+
 .treasure {
+  position: absolute;
   background-color: chartreuse;
   height: 100%;
   width: 100%;
-  z-index: 3;
-  pointer-events: auto;
-  transition: all 0.2s ease;
-}
-
-.maze-editor-cell:not(:has(.hit-zone:hover)):hover {
-  background: var(--accent-transparent, rgba(109, 140, 207, 0.35));
-}
-
-.maze-editor-cell.hovered {
-  background: rgba(109, 140, 207, 0.35);
+  z-index: 1;
+  pointer-events: none;
+  transition: background 0.2s ease;
 }
 
 .maze-editor-actions {

@@ -1,10 +1,10 @@
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import { BrowserRouter, Routes, Route } from "react-router";
-import Home from '../Home/Home.jsx'
+import Home from '../Home/Home.tsx'
 import Game from '../Game/Game.tsx'
-import Login from '../Auth/Login.jsx'
-import Register from '../Auth/Register.jsx'
+import Login from '../Auth/Login.tsx'
+import Register from '../Auth/Register.tsx'
 import { SignalRProvider } from '../../models/SignalRContext.tsx'
 import './Main.css'
 
