@@ -3,15 +3,15 @@ import { Directions } from '../enums/Directions';
 export class Maze {
   sizeX: number;
   sizeY: number;
-  horizontalWalls: Uint8Array;
-  verticalWalls: Uint8Array;
+  horizontalWalls: number[];
+  verticalWalls: number[];
   treasure: number | null;
 
   constructor(size_x: number, size_y: number) {
     this.sizeX = size_x;
     this.sizeY = size_y;
-    this.horizontalWalls = new Uint8Array(size_x * (size_y - 1)).fill(0);
-    this.verticalWalls = new Uint8Array((size_x - 1) * size_y).fill(0);
+    this.horizontalWalls = new Array(size_x * (size_y - 1)).fill(0);
+    this.verticalWalls = new Array((size_x - 1) * size_y).fill(0);
     this.treasure = null;
   }
 
